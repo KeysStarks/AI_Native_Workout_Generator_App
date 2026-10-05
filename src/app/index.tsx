@@ -1,98 +1,164 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { OptionButton } from "@/components/option-button";
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
+type TargetArea = "full body" | "upper body" | "lower body" | "core";
+type Exercise = {
+  name: string;
+  sets: number;
+  reps: number;
+  timed?: boolean;
+};
+
+const EXERCISE_COUNTS = [3, 4, 5, 6];
+const TARGET_AREAS: TargetArea[] = [
+  "full body",
+  "upper body",
+  "lower body",
+  "core",
+];
+const EXERCISES: Record<TargetArea, Exercise[]> = {
+  "upper body": [
+    { name: "Push-ups", sets: 3, reps: 12 },
+    { name: "Bench Press", sets: 3, reps: 10 },
+    { name: "Shoulder Press", sets: 3, reps: 10 },
+    { name: "Pull-ups", sets: 3, reps: 8 },
+    { name: "Chest Fly", sets: 3, reps: 12 },
+    { name: "Dumbbell Press", sets: 3, reps: 10 },
+  ],
+  "lower body": [
+    { name: "Lunges", sets: 3, reps: 12 },
+    { name: "Leg Extension", sets: 3, reps: 10 },
+    { name: "Hip Extension", sets: 3, reps: 12 },
+    { name: "Squats", sets: 3, reps: 10 },
+    { name: "Leg Curls", sets: 3, reps: 12 },
+    { name: "Calf Raises", sets: 3, reps: 15 },
+  ],
+  "full body": [
+    { name: "Burpees", sets: 3, reps: 12 },
+    { name: "Farmer's Walk", sets: 3, reps: 30, timed: true },
+    { name: "Deadlift to Row", sets: 3, reps: 10 },
+    { name: "Clean and Press", sets: 3, reps: 10 },
+    { name: "Thrusters", sets: 3, reps: 12 },
+    { name: "Kettlebell Swings", sets: 3, reps: 15 },
+  ],
+  core: [
+    { name: "Plank", sets: 3, reps: 60, timed: true },
+    { name: "Leg Raises", sets: 3, reps: 12 },
+    { name: "Decline Sit-ups", sets: 3, reps: 12 },
+    { name: "Russian Twists", sets: 3, reps: 20 },
+    { name: "Bicycle Crunches", sets: 3, reps: 20 },
+    { name: "Mountain Climbers", sets: 3, reps: 30, timed: true },
+  ],
+};
+
+function generateWorkout(targetArea: TargetArea, count: number): Exercise[] {
+  const exercises = EXERCISES[targetArea];
+  const shuffled = [...exercises].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
 }
 
 export default function HomeScreen() {
+  const [targetArea, setTargetArea] = useState<TargetArea>("full body");
+  const [workout, setWorkout] = useState<Exercise[]>([]);
+  const [count, setCount] = useState(4);
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <View style={styles.container}>
+      <Text style={styles.title}>Workout Generator</Text>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+      {TARGET_AREAS.map((area) => (
+        <OptionButton
+          key={area}
+          label={area}
+          selected={area === targetArea}
+          onPress={() => setTargetArea(area)}
+        />
+      ))}
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+      <View style={styles.row}>
+        {EXERCISE_COUNTS.map((n) => (
+          <OptionButton
+            key={n}
+            label={n.toString()}
+            selected={n === count}
+            onPress={() => setCount(n)}
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        ))}
+      </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      <Pressable
+        style={styles.generateButton}
+        onPress={() => setWorkout(generateWorkout(targetArea, count))}
+      >
+        <Text style={styles.generateButtonText}>Generate Workout</Text>
+      </Pressable>
+      {workout.length > 0 && (
+        <View style={styles.workoutList}>
+          {workout.map((exercise, index) => (
+            <View key={exercise.name} style={styles.exerciseCard}>
+              <Text style={styles.exerciseNumber}>{index + 1}</Text>
+              <Text style={styles.exerciseName}>
+                {exercise.name} - {exercise.sets}x{exercise.reps}{" "}
+                {exercise.timed ? "sec" : "reps"}
+              </Text>
+            </View>
+          ))}
+        </View>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
-    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: "bold",
   },
-  code: {
-    textTransform: 'uppercase',
+  row: {
+    flexDirection: "row",
+    gap: 8,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  generateButton: {
+    marginTop: 20,
+    marginBottom: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    backgroundColor: "#2f5d8A",
+  },
+  generateButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  workoutList: {
+    gap: 8,
+    paddingHorizontal: 16,
+    width: "100%",
+    maxWidth: 360,
+  },
+  exerciseCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    gap: 8,
+    borderRadius: 8,
+    backgroundColor: "#f0f0f0",
+  },
+  exerciseNumber: {
+    width: 20,
+    color: "#2f5d8A",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  exerciseName: {
+    fontSize: 16,
   },
 });

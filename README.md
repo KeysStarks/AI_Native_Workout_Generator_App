@@ -1,56 +1,84 @@
-# Welcome to your Expo app 👋
+# Workout Generator
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A mobile app that builds a random workout for the muscle group you choose. Pick a target area and how many exercises you want, then tap **Generate Workout** to get a list with sets and reps.
 
-## Get started
+Built with Expo, React Native, and TypeScript. It runs on iOS, Android, and the web.
 
-1. Install dependencies
+## Features
+
+- **Choose a target area:** full body, upper body, lower body, or core
+- **Choose the workout length:** 3 to 6 exercises
+- **Random workouts:** a new shuffle every time you tap Generate
+- **Sets and reps for each exercise**, with timed exercises (like Plank) shown in seconds
+- **Highlighted selections**, so you can always see what's picked
+
+## Tech stack
+
+- [Expo](https://expo.dev) (SDK 57) with [Expo Router](https://docs.expo.dev/router/introduction/)
+- [React Native](https://reactnative.dev)
+- [TypeScript](https://www.typescriptlang.org) in strict mode
+
+## Getting started
+
+You'll need [Node.js](https://nodejs.org) installed.
+
+1. Install dependencies:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+2. Start the development server:
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+3. Open the app:
+   - Press **`w`** to open it in your web browser
+   - Scan the QR code with [Expo Go](https://expo.dev/go) to run it on your phone
+   - Press **`i`** or **`a`** to open the iOS simulator or Android emulator
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Project structure
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+src/
+├── app/
+│   └── index.tsx           # Home screen: selections, workout logic, and results
+└── components/
+    └── option-button.tsx   # Reusable selectable button
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Files in `src/app/` are screens (Expo Router uses file-based routing). Reusable pieces live in `src/components/`.
 
-### Other setup steps
+## How it works
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Exercises are stored by target area, and each one has a name, sets, and reps:
 
-## Learn more
+```ts
+type Exercise = {
+  name: string;
+  sets: number;
+  reps: number;
+  timed?: boolean; // true when reps means seconds
+};
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+When you tap **Generate Workout**, the app copies the list for the selected area, shuffles it, and keeps the number of exercises you chose.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Checks
 
-## Join the community
+```bash
+npx tsc --noEmit   # typecheck
+npx expo lint      # lint
+```
 
-Join our community of developers creating universal apps.
+## Roadmap
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [ ] Make the screen scrollable on smaller phones
+- [ ] Exercise detail screen
+- [ ] Save favorite workouts on the device
+
+## About
+
+I built this project while learning React Native and TypeScript, writing the code step by step.
