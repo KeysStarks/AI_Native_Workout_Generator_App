@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { OptionButton } from "@/components/option-button";
 
@@ -65,7 +65,7 @@ export default function HomeScreen() {
   const [count, setCount] = useState(4);
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Workout Generator</Text>
 
       {TARGET_AREAS.map((area) => (
@@ -107,15 +107,16 @@ export default function HomeScreen() {
           ))}
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 24,
   },
   title: {
     fontSize: 24,
