@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, Text } from "react-native";
 
+import { useTheme } from "@/hooks/use-theme";
+
 type OptionButtonProps = {
   label: string;
   selected: boolean;
@@ -7,12 +9,21 @@ type OptionButtonProps = {
 };
 
 export function OptionButton({ label, selected, onPress }: OptionButtonProps) {
+  const theme = useTheme();
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.button, selected && styles.buttonSelected]}
+      style={[
+        styles.button,
+        { backgroundColor: selected ? theme.text : theme.backgroundElement },
+      ]}
     >
-      <Text style={[styles.buttonText, selected && styles.buttonTextSelected]}>
+      <Text
+        style={[
+          styles.buttonText,
+          { color: selected ? theme.background : theme.text },
+        ]}
+      >
         {label}
       </Text>
     </Pressable>
@@ -25,15 +36,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginVertical: 4,
     borderRadius: 8,
-    backgroundColor: "#eee",
   },
-  buttonSelected: {
-    backgroundColor: "#222",
-  },
-  buttonTextSelected: {
-    color: "white",
-  },
-  buttonText: {
-    color: "black",
-  },
+  buttonText: {},
 });

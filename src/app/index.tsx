@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { OptionButton } from "@/components/option-button";
+import { useTheme } from "@/hooks/use-theme";
 
 type TargetArea = "full body" | "upper body" | "lower body" | "core";
 type Exercise = {
@@ -60,13 +61,19 @@ function generateWorkout(targetArea: TargetArea, count: number): Exercise[] {
 }
 
 export default function HomeScreen() {
+  const theme = useTheme();
   const [targetArea, setTargetArea] = useState<TargetArea>("full body");
   const [workout, setWorkout] = useState<Exercise[]>([]);
   const [count, setCount] = useState(4);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Workout Generator</Text>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      style={{ backgroundColor: theme.background }}
+    >
+      <Text style={[styles.title, { color: theme.text }]}>
+        Workout Generator
+      </Text>
 
       {TARGET_AREAS.map((area) => (
         <OptionButton
@@ -97,9 +104,17 @@ export default function HomeScreen() {
       {workout.length > 0 && (
         <View style={styles.workoutList}>
           {workout.map((exercise, index) => (
-            <View key={exercise.name} style={styles.exerciseCard}>
-              <Text style={styles.exerciseNumber}>{index + 1}</Text>
-              <Text style={styles.exerciseName}>
+            <View
+              key={exercise.name}
+              style={[
+                styles.exerciseCard,
+                { backgroundColor: theme.backgroundElement },
+              ]}
+            >
+              <Text style={[styles.exerciseNumber, { color: theme.accent }]}>
+                {index + 1}
+              </Text>
+              <Text style={[styles.exerciseName, { color: theme.text }]}>
                 {exercise.name} - {exercise.sets}x{exercise.reps}{" "}
                 {exercise.timed ? "sec" : "reps"}
               </Text>
@@ -151,11 +166,9 @@ const styles = StyleSheet.create({
     padding: 12,
     gap: 8,
     borderRadius: 8,
-    backgroundColor: "#f0f0f0",
   },
   exerciseNumber: {
     width: 20,
-    color: "#2f5d8A",
     fontSize: 16,
     fontWeight: "bold",
   },
