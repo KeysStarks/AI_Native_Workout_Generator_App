@@ -11,6 +11,7 @@ Built with Expo, React Native, and TypeScript. It runs on iOS, Android, and the 
 - **Random workouts:** a new shuffle every time you tap Generate
 - **Sets and reps for each exercise**, with timed exercises (like Plank) shown in seconds
 - **Highlighted selections**, so you can always see what's picked
+- **Light and dark mode** that follows your phone's setting
 
 ## Tech stack
 
@@ -75,10 +76,11 @@ npx expo lint      # lint
 
 ## Roadmap
 
-- [ ] Make the screen scrollable on smaller phones
+- [x] Make the screen scrollable on smaller phones
+- [x] Light and dark mode
 - [ ] Exercise detail screen
 - [ ] Save favorite workouts on the device
 
 ## About
 
-I built this project while learning React Native and TypeScript, writing the code step by step.
+I built this project while learning React Native and TypeScript, using an AI-native workflow: AI acted as my tutor and code reviewer, and I wrote all of the app's feature code by hand.
